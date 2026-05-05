@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aadi — Goal Tracker 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080810;
+  --bg2: #0e0e1a;
+  --bg3: #13131f;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.11);
+  --text: #eeeef5;
+  --text2: #8888a8;
+  --text3: #4a4a68;
+  --accent: #e8a045;
+  --accent2: #f5c57a;
+  --green: #2dca72;
+  --green-bg: rgba(45,202,114,0.1);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.1);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.1);
+  --blue: #4f9eff;
+  --blue-bg: rgba(79,158,255,0.1);
+  --teal: #14d9c5;
+  --teal-bg: rgba(20,217,197,0.1);
+  --purple: #a78bfa;
+  --purple-bg: rgba(167,139,250,0.1);
+  --orange: #fb923c;
+  --orange-bg: rgba(251,146,60,0.1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* NAV */
+.topnav { position: sticky; top: 0; z-index: 100; background: rgba(8,8,16,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0; padding: 0 24px; }
+.nav-logo { font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800; color: var(--text); padding: 14px 0; margin-right: 28px; white-space: nowrap; letter-spacing: -0.3px; }
+.nav-logo span { color: var(--accent); }
+.nav-tabs { display: flex; gap: 0; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.nav-tabs::-webkit-scrollbar { display: none; }
+.nav-tab { padding: 14px 16px; font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; user-select: none; }
+.nav-tab:hover { color: var(--text2); }
+.nav-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+.progress-pill { margin-left: auto; background: var(--bg3); border: 1px solid var(--border2); border-radius: 20px; padding: 6px 14px; font-size: 12px; color: var(--text2); white-space: nowrap; }
+.progress-pill span { color: var(--accent2); font-weight: 600; }
+
+/* MAIN */
+main { max-width: 1120px; margin: 0 auto; padding: 32px 24px 100px; }
+.section { display: none; }
+.section.active { display: block; }
+
+/* HERO */
+.hero { background: linear-gradient(135deg, #0f0f20 0%, #141428 50%, #0f1820 100%); border: 1px solid var(--border2); border-radius: 18px; padding: 36px; margin-bottom: 28px; position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; top: -80px; right: -80px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(232,160,69,0.12) 0%, transparent 70%); pointer-events: none; }
+.hero::after { content: ''; position: absolute; bottom: -60px; left: -40px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(79,158,255,0.08) 0%, transparent 70%); pointer-events: none; }
+.hero-title { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; color: var(--text); margin-bottom: 6px; letter-spacing: -0.3px; }
+.hero-title span { color: var(--accent); }
+.hero-sub { font-size: 13px; color: var(--text2); }
+.hero-sub strong { color: var(--accent2); }
+.stat-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-top: 28px; }
+.stat-card { background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 12px; padding: 18px 16px; }
+.stat-val { font-family: 'Outfit', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); }
+.stat-label { font-size: 10px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.8px; }
+.stat-sub { font-size: 11px; color: var(--text2); margin-top: 4px; }
+
+/* NOTE BOX */
+.note-box { background: rgba(245,158,11,0.06); border: 1px solid rgba(245,158,11,0.2); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
+.note-box-title { font-family: 'Outfit', sans-serif; font-size: 13px; font-weight: 700; color: var(--amber); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.note-box ul { list-style: none; }
+.note-box ul li { font-size: 12px; color: var(--text2); padding: 4px 0; display: flex; gap: 8px; }
+.note-box ul li::before { content: '→'; color: var(--amber); flex-shrink: 0; }
+
+/* SECTION HEADINGS */
+.sec-title { font-family: 'Outfit', sans-serif; font-size: 19px; font-weight: 700; color: var(--text); margin: 36px 0 16px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.3px; }
+.sec-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.sec-subtitle { font-size: 12px; color: var(--text2); margin: -10px 0 18px; }
+
+/* COUNTDOWN */
+.cd-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 32px; }
+.cd-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px 16px; text-align: center; }
+.cd-days { font-family: 'Outfit', sans-serif; font-size: 32px; font-weight: 800; }
+.cd-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.cd-event { font-size: 11px; color: var(--text2); margin-top: 6px; }
+
+/* TASK TABLE */
+.task-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+.task-table th { text-align: left; font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; padding: 8px 12px; border-bottom: 1px solid var(--border2); }
+.task-table td { padding: 12px 12px; border-bottom: 1px solid var(--border); font-size: 13px; vertical-align: top; }
+.task-table tr:hover td { background: rgba(255,255,255,0.02); }
+.task-num { color: var(--text3); font-size: 12px; font-weight: 600; }
+.task-name { font-weight: 500; color: var(--text); }
+.task-note { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.task-dl { font-size: 12px; font-weight: 500; }
+
+/* BADGES */
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; letter-spacing: 0.3px; }
+.b-red { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,0.2); }
+.b-amber { background: var(--amber-bg); color: var(--amber); border: 1px solid rgba(245,158,11,0.2); }
+.b-green { background: var(--green-bg); color: var(--green); border: 1px solid rgba(45,202,114,0.2); }
+.b-blue { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(79,158,255,0.2); }
+.b-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(167,139,250,0.25); }
+.b-teal { background: var(--teal-bg); color: var(--teal); border: 1px solid rgba(20,217,197,0.2); }
+.b-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(251,146,60,0.2); }
+.b-gray { background: rgba(255,255,255,0.05); color: var(--text2); border: 1px solid var(--border); }
+
+/* CHECKLIST */
+.cl-group { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
+.cl-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+.cl-head-title { font-weight: 600; font-size: 13px; color: var(--text); flex: 1; }
+.cl-prog-text { font-size: 11px; color: var(--text3); }
+.cl-bar { height: 3px; background: rgba(255,255,255,0.06); margin: 0; }
+.cl-fill { height: 3px; background: var(--accent); transition: width 0.4s ease; border-radius: 2px; }
+.cl-body { padding: 8px 0; }
+.cl-item { display: flex; align-items: flex-start; gap: 12px; padding: 8px 18px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.cl-item:hover { background: rgba(255,255,255,0.02); }
+.cl-item.done .cl-text { text-decoration: line-through; color: var(--text3); }
+.cl-check { width: 18px; height: 18px; border: 1px solid var(--border2); border-radius: 5px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-top: 1px; transition: all 0.2s; }
+.cl-item.done .cl-check { background: var(--accent); border-color: var(--accent); }
+.cl-item.done .cl-check::after { content: '✓'; font-size: 11px; color: #000; font-weight: 700; }
+.cl-text { font-size: 13px; color: var(--text2); }
+.cl-sub { font-size: 11px; color: var(--text3); }
+
+/* 12-WEEK PROJECT TRACKER */
+.proj-header { background: var(--bg2); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 20px; }
+.proj-title-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.proj-title-input { flex: 1; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 14px; font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700; color: var(--text); outline: none; transition: border-color 0.2s; }
+.proj-title-input::placeholder { color: var(--text3); }
+.proj-title-input:focus { border-color: var(--accent); }
+.proj-dl-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap; transition: opacity 0.2s; font-family: 'DM Sans', sans-serif; }
+.proj-dl-btn:hover { opacity: 0.85; }
+.proj-dl-btn2 { background: transparent; color: var(--accent2); border: 1px solid rgba(232,160,69,0.3); border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.proj-dl-btn2:hover { background: rgba(232,160,69,0.08); }
+
+.week-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.week-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.week-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+.week-num { font-family: 'Outfit', sans-serif; font-size: 12px; font-weight: 700; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+.week-phase { font-size: 10px; }
+.week-body { padding: 10px 14px; }
+.week-task { font-size: 12px; color: var(--text2); font-weight: 500; margin-bottom: 4px; }
+.week-check { display: flex; align-items: center; gap: 8px; padding: 5px 0; cursor: pointer; }
+.week-check input[type=checkbox] { accent-color: var(--accent); width: 14px; height: 14px; cursor: pointer; }
+.week-check label { font-size: 11px; color: var(--text2); cursor: pointer; }
+.week-check input:checked + label { text-decoration: line-through; color: var(--text3); }
+
+/* MILESTONES */
+.ml-list { list-style: none; }
+.ml-item { display: flex; align-items: flex-start; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.ml-item:last-child { border-bottom: none; }
+.ml-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.ml-date { min-width: 120px; font-size: 12px; font-weight: 600; color: var(--text3); }
+.ml-text { font-size: 13px; color: var(--text); }
+.ml-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* DOWNLOAD BAR */
+.dl-bar { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(8,8,16,0.95); backdrop-filter: blur(14px); border-top: 1px solid var(--border); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; z-index: 200; }
+.dl-bar-label { font-size: 12px; color: var(--text2); }
+.dl-bar-label strong { color: var(--text); }
+.dl-btns { display: flex; gap: 10px; }
+.dl-btn { padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; }
+.dl-btn-primary { background: var(--accent); color: #000; border: none; }
+.dl-btn-primary:hover { opacity: 0.85; }
+.dl-btn-secondary { background: transparent; color: var(--text2); border: 1px solid var(--border2); }
+.dl-btn-secondary:hover { color: var(--text); border-color: var(--border2); background: rgba(255,255,255,0.04); }
+
+/* INNER TABS */
+.inner-tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 24px; overflow-x: auto; scrollbar-width: none; }
+.inner-tabs::-webkit-scrollbar { display: none; }
+.inner-tab { padding: 10px 16px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+.inner-tab:hover { color: var(--text2); }
+.inner-tab.active { color: var(--text); border-bottom-color: var(--accent); }
+.inner-section { display: none; }
+.inner-section.active { display: block; }
+
+/* STATUS INPUTS */
+.status-select { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px; color: var(--text2); outline: none; cursor: pointer; }
+.notes-input { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 4px 8px; font-size: 11px; color: var(--text2); outline: none; width: 100%; min-width: 120px; }
+.notes-input:focus, .status-select:focus { border-color: var(--accent); }
+
+/* ACCORDION */
+.acc-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
+.acc-head { padding: 14px 18px; display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.acc-head:hover { background: rgba(255,255,255,0.02); }
+.acc-title { flex: 1; font-size: 13px; font-weight: 600; color: var(--text); }
+.acc-arrow { color: var(--text3); font-size: 12px; transition: transform 0.2s; }
+.acc-body { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
+.acc-body.open { display: block; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .stat-row { grid-template-columns: repeat(2, 1fr); }
+  .cd-grid { grid-template-columns: repeat(2, 1fr); }
+  .week-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-logo">Aadi <span>·</span> 2026</div>
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTab('overview',this)">Overview</div>
+    <div class="nav-tab" onclick="showTab('competitions',this)">Competitions</div>
+    <div class="nav-tab" onclick="showTab('research',this)">Research</div>
+    <div class="nav-tab" onclick="showTab('conferences',this)">Conferences</div>
+    <div class="nav-tab" onclick="showTab('scholarships',this)">Scholarships</div>
+    <div class="nav-tab" onclick="showTab('applications',this)">Applications</div>
+    <div class="nav-tab" onclick="showTab('project12',this)">12-Week Project</div>
+  </div>
+  <div class="progress-pill">Overall: <span id="prog-pct">0%</span></div>
+</nav>
+
+<main>
+
+<!-- =========== OVERVIEW =========== -->
+<div id="overview" class="section active">
+  <div class="hero">
+    <div class="hero-title">Aadi <span>Goal Tracker</span></div>
+    <div class="hero-sub">2026 Roadmap — Competitions · Research · Conferences · Scholarships · College Applications · Projects<br>
+    <strong>Current date: May 5, 2026</strong> — Mission Brain Hackathon deadline in 20 days!</div>
+    <div class="stat-row">
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--orange)">3</div>
+        <div class="stat-label">Competitions</div>
+        <div class="stat-sub">Active right now</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--blue)">3</div>
+        <div class="stat-label">Research</div>
+        <div class="stat-sub">In progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--teal)">3</div>
+        <div class="stat-label">Conferences</div>
+        <div class="stat-sub">Targeted</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--purple)">2</div>
+        <div class="stat-label">Scholarships</div>
+        <div class="stat-sub">MEXT + RVP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" style="color:var(--accent)">16</div>
+        <div class="stat-label">Total Goals</div>
+        <div class="stat-sub">2026 pipeline</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NOTE BOX -->
+  <div class="note-box">
+    <div class="note-box-title">⚡ Strategic Notes — Be Selective, Move Decisively</div>
+    <ul>
+      <li>Flying Wings project must close by May 2026 — prioritize this FIRST this week</li>
+      <li>Mission Brain Hackathon deadline is May 25 — register + form team immediately if not done</li>
+      <li>IIT Madras Road Safety Hackathon — check registration window; solve statement selection is key</li>
+      <li>MEXT Scholarship: Japanese embassy application opens annually around April–June; do NOT miss embassy notification. Requires strong academic records + motivation letter in Japanese (optional) + medical cert</li>
+      <li>Professor-led Research (domain): Must choose AI/Physics/Systems by end of May — indecision = missed summer research window</li>
+      <li>Rashtriya Vigyan Puraskar / PMRBP — dates given appear contradictory (11 May 2026 – 28 Mar 2026); re-verify official portal dates</li>
+      <li>Conrad Challenge is in finals stage (~April) — check if still active or concluded</li>
+      <li>College selection shortlisting starts May–July 2026 — begin building Naviance / spreadsheet list NOW</li>
+      <li>You CANNOT do everything equally. Rank: Research Paper + 1–2 key competitions + MEXT as top tier</li>
+      <li>ICAME Turkey (Dec 2026) requires paper/abstract submission months before — prepare abstract by Sept</li>
+    </ul>
+  </div>
+
+  <!-- COUNTDOWN -->
+  <div class="sec-title">Upcoming Deadlines</div>
+  <div class="cd-grid" id="countdowns"></div>
+
+  <!-- FULL GOAL TABLE -->
+  <div class="sec-title">Master Goal Table</div>
+  <table class="task-table">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Task / Deliverable</th>
+        <th>Category</th>
+        <th>Timeline</th>
+        <th>Deadline / Notes</th>
+        <th>Status</th>
+        <th>Your Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="task-num">1</td><td><div class="task-name">Complete Flying Wings Project</div></td><td><span class="badge b-orange">Project</span></td><td class="task-dl" style="color:var(--text2)">Ongoing</td><td class="task-dl" style="color:var(--red)">May 2026</td><td><select class="status-select" onchange="saveStatus('t1',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n1',this.value)"></td></tr>
+      <tr><td class="task-num">2</td><td><div class="task-name">Mission Brain Hackathon</div><div class="task-note">Form team + register + prepare</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">May–June 2026</td><td class="task-dl" style="color:var(--red)">25 May 2026</td><td><select class="status-select" onchange="saveStatus('t2',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n2',this.value)"></td></tr>
+      <tr><td class="task-num">3</td><td><div class="task-name">Advanced AI Research Paper (F1)</div></td><td><span class="badge b-blue">Research</span></td><td class="task-dl" style="color:var(--text2)">April–June 2026</td><td class="task-dl" style="color:var(--amber)">Self-defined</td><td><select class="status-select" onchange="saveStatus('t3',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n3',this.value)"></td></tr>
+      <tr><td class="task-num">4</td><td><div class="task-name">Conrad Challenge</div><div class="task-note">Check finals status — may be concluded</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">Nov 2025–Apr 2026</td><td class="task-dl" style="color:var(--text3)">~April finals</td><td><select class="status-select" onchange="saveStatus('t4',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n4',this.value)"></td></tr>
+      <tr><td class="task-num">5</td><td><div class="task-name">Tim Rok Participation Verification</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">Not defined</td><td class="task-dl" style="color:var(--text3)">No verified data</td><td><select class="status-select" onchange="saveStatus('t5',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n5',this.value)"></td></tr>
+      <tr><td class="task-num">6</td><td><div class="task-name">Hack the North — Plan & Prepare</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">May–August 2026</td><td class="task-dl" style="color:var(--amber)">Event Sept 2026</td><td><select class="status-select" onchange="saveStatus('t6',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n6',this.value)"></td></tr>
+      <tr><td class="task-num">7</td><td><div class="task-name">Singapore Conference</div></td><td><span class="badge b-teal">Conference</span></td><td class="task-dl" style="color:var(--text2)">May 2026</td><td class="task-dl" style="color:var(--text3)">Dates not fixed</td><td><select class="status-select" onchange="saveStatus('t7',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n7',this.value)"></td></tr>
+      <tr><td class="task-num">8</td><td><div class="task-name">India Conference</div></td><td><span class="badge b-teal">Conference</span></td><td class="task-dl" style="color:var(--text2)">June 2026</td><td class="task-dl" style="color:var(--text3)">Dates not fixed</td><td><select class="status-select" onchange="saveStatus('t8',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n8',this.value)"></td></tr>
+      <tr><td class="task-num">9</td><td><div class="task-name">Citizen Entrepreneurship Competition</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">March–June 2026</td><td class="task-dl" style="color:var(--amber)">~June finals</td><td><select class="status-select" onchange="saveStatus('t9',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n9',this.value)"></td></tr>
+      <tr><td class="task-num">10</td><td><div class="task-name">IRIS 2026</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">March–July 2026</td><td class="task-dl" style="color:var(--amber)">~Mid-year</td><td><select class="status-select" onchange="saveStatus('t10',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n10',this.value)"></td></tr>
+      <tr><td class="task-num">11</td><td><div class="task-name">ICAME Turkey Conference</div><div class="task-note">Abstract submission needed by Sept 2026</div></td><td><span class="badge b-teal">Conference</span></td><td class="task-dl" style="color:var(--text2)">Planned</td><td class="task-dl" style="color:var(--text3)">December 2026</td><td><select class="status-select" onchange="saveStatus('t11',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n11',this.value)"></td></tr>
+      <tr><td class="task-num">12</td><td><div class="task-name">Professor-led Research (AI/Physics/Systems)</div><div class="task-note">Domain selection required first!</div></td><td><span class="badge b-blue">Research</span></td><td class="task-dl" style="color:var(--text2)">Starting May/June</td><td class="task-dl" style="color:var(--red)">Decide domain NOW</td><td><select class="status-select" onchange="saveStatus('t12',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n12',this.value)"></td></tr>
+      <tr><td class="task-num">13</td><td><div class="task-name">Core Passion Project</div></td><td><span class="badge b-blue">Research</span></td><td class="task-dl" style="color:var(--text2)">April–June 2026</td><td class="task-dl" style="color:var(--amber)">Closure June 2026</td><td><select class="status-select" onchange="saveStatus('t13',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n13',this.value)"></td></tr>
+      <tr><td class="task-num">14</td><td><div class="task-name">Rashtriya Vigyan Puraskar / PMRBP</div><div class="task-note">Verify official dates — listed dates appear contradictory</div></td><td><span class="badge b-purple">Award</span></td><td class="task-dl" style="color:var(--text2)">March–May 2026</td><td class="task-dl" style="color:var(--amber)">Re-verify portal</td><td><select class="status-select" onchange="saveStatus('t14',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n14',this.value)"></td></tr>
+      <tr><td class="task-num">15</td><td><div class="task-name">College Selection Shortlisting</div></td><td><span class="badge b-green">Applications</span></td><td class="task-dl" style="color:var(--text2)">May–July 2026</td><td class="task-dl" style="color:var(--amber)">Shortlisting phase</td><td><select class="status-select" onchange="saveStatus('t15',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n15',this.value)"></td></tr>
+      <tr><td class="task-num">16</td><td><div class="task-name">Personal Statements & Essays Brainstorm</div></td><td><span class="badge b-green">Applications</span></td><td class="task-dl" style="color:var(--text2)">August 2026</td><td class="task-dl" style="color:var(--text3)">Ideation phase</td><td><select class="status-select" onchange="saveStatus('t16',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n16',this.value)"></td></tr>
+      <tr><td class="task-num">17</td><td><div class="task-name">IIT Madras Road Safety Hackathon</div><div class="task-note">Check registration window; select problem statement strategically</div></td><td><span class="badge b-orange">Competition</span></td><td class="task-dl" style="color:var(--text2)">TBD — check portal</td><td class="task-dl" style="color:var(--red)">Verify dates!</td><td><select class="status-select" onchange="saveStatus('t17',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n17',this.value)"></td></tr>
+      <tr><td class="task-num">18</td><td><div class="task-name">MEXT Scholarship Application</div><div class="task-note">Embassy application — strongest opportunity for Japan study</div></td><td><span class="badge b-purple">Scholarship</span></td><td class="task-dl" style="color:var(--text2)">April–June 2026</td><td class="task-dl" style="color:var(--red)">Do NOT miss!</td><td><select class="status-select" onchange="saveStatus('t18',this.value)"><option>Pending</option><option>In Progress</option><option>Done</option><option>Blocked</option></select></td><td><input class="notes-input" placeholder="Add note..." onchange="saveNote('n18',this.value)"></td></tr>
+    </tbody>
+  </table>
+
+  <div style="margin-top:20px; text-align:right">
+    <button class="proj-dl-btn" onclick="downloadProgressJSON()">⬇ Download Full Progress Report</button>
+  </div>
+</div>
+
+<!-- =========== COMPETITIONS =========== -->
+<div id="competitions" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ Competitions Note</div>
+    <ul>
+      <li>Mission Brain is the most immediate (May 25). Everything else is secondary this week.</li>
+      <li>IIT Madras Road Safety Hackathon — a prestigious IIT-backed competition; verify problem statements and team size on official portal.</li>
+      <li>Hack the North prep can be steady (May–Aug); focus on portfolio + past project cleanup.</li>
+      <li>IRIS 2026 requires a well-documented research project — align with your AI paper (Goal #3).</li>
+    </ul>
+  </div>
+
+  <!-- Mission Brain -->
+  <div class="sec-title">Mission Brain Hackathon</div>
+  <div class="sec-subtitle">Deadline: 25 May 2026 — 20 days away</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🧠 Mission Brain Hackathon Checklist</div>
+      <div class="cl-prog-text" id="mbrain-prog">0/7 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="mbrain-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Register on official Mission Brain Hackathon portal</div><div class="cl-sub">Check brainhackathon.com or IIT portal</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Form team (2–4 members typically required)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Read problem statement / theme in full</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Brainstorm solution approach + divide work by expertise</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Build MVP / prototype / concept (80% by May 20)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Prepare submission deck / report / demo video</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mbrain')"><div class="cl-check"></div><div><div class="cl-text">Submit by May 25, 2026 (do not wait for last hour)</div></div></div>
+    </div>
+  </div>
+
+  <!-- IIT Madras Road Safety -->
+  <div class="sec-title">IIT Madras Road Safety Hackathon</div>
+  <div class="sec-subtitle">Verify registration window on official IIT Madras portal — strategic priority</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🚦 IIT Madras Road Safety Hackathon Checklist</div>
+      <div class="cl-prog-text" id="iitrs-prog">0/8 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="iitrs-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Find & bookmark official IIT Madras Road Safety Hackathon page</div><div class="cl-sub">iitmadras.ac.in or roadsafety.iitm.ac.in</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Note registration deadline + team size requirement</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Read all problem statements — shortlist 2–3 options</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Choose problem statement aligned with your AI/tech strengths</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Form team + assign roles (AI/ML, hardware, presentation)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Research existing solutions / literature in road safety AI</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Develop prototype / proof-of-concept</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iitrs')"><div class="cl-check"></div><div><div class="cl-text">Prepare final submission (technical report + demo)</div></div></div>
+    </div>
+  </div>
+
+  <!-- Hack the North -->
+  <div class="sec-title">Hack the North 2026</div>
+  <div class="sec-subtitle">Event: September 2026 — Prep: May–August 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🏔 Hack the North Preparation Checklist</div>
+      <div class="cl-prog-text" id="htn-prog">0/7 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="htn-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Monitor hackthenorth.com for application opening (usually June)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Update GitHub profile with recent projects</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Prepare short application essay (why Hack the North, past hackathon experience)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Identify 2 teammates in advance (team of 4 typically)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Practice: build a project in 24 hrs solo to prepare stamina</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Apply as soon as applications open</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'htn')"><div class="cl-check"></div><div><div class="cl-text">Arrange Canada travel visa / paperwork (if required for international)</div></div></div>
+    </div>
+  </div>
+
+  <!-- IRIS -->
+  <div class="sec-title">IRIS 2026 National Science Fair</div>
+  <div class="sec-subtitle">March–July 2026 | ~Mid-year finals</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🔬 IRIS 2026 Checklist</div>
+      <div class="cl-prog-text" id="iris-prog">0/6 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="iris-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Check current IRIS 2026 stage / registration status</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Identify which project to submit (align with AI research paper if possible)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Complete project documentation + abstract (500 words)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Prepare poster/display board for judging</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Practice 5-min verbal presentation of project</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'iris')"><div class="cl-check"></div><div><div class="cl-text">Submit all documents + attend finals</div></div></div>
+    </div>
+  </div>
+
+  <!-- Citizen Entrepreneurship -->
+  <div class="sec-title">Citizen Entrepreneurship Competition</div>
+  <div class="sec-subtitle">March–June 2026 | ~June finals</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">💡 Citizen Entrepreneurship Checklist</div>
+      <div class="cl-prog-text" id="cec-prog">0/5 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="cec-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'cec')"><div class="cl-check"></div><div><div class="cl-text">Confirm current round status + upcoming deadlines</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cec')"><div class="cl-check"></div><div><div class="cl-text">Define social/entrepreneurial problem to address</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cec')"><div class="cl-check"></div><div><div class="cl-text">Develop business model / solution pitch deck</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cec')"><div class="cl-check"></div><div><div class="cl-text">Prepare financials / impact metrics section</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cec')"><div class="cl-check"></div><div><div class="cl-text">Practice pitch presentation (3–7 min format)</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== RESEARCH =========== -->
+<div id="research" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ Research Strategy Note</div>
+    <ul>
+      <li>AI Research Paper (F1) is your flagship — must be completed + submitted to a journal/conference by June 2026.</li>
+      <li>Core Passion Project should align with your college narrative — makes for a powerful "spike" in applications.</li>
+      <li>Professor-led research: email at least 5 professors this week — response rate is low; start immediately.</li>
+      <li>Target professors at IITs, IISc, or international collaborators for stronger credibility.</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">AI Research Paper (F1) — Flagship</div>
+  <div class="sec-subtitle">April–June 2026 | Self-defined deadline — aim for submission by mid-June</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">📄 AI Research Paper Milestones</div>
+      <div class="cl-prog-text" id="aipaper-prog">0/10 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="aipaper-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Finalize research question / hypothesis</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Complete literature review (20+ papers cited)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Design methodology / experimental setup</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Collect / prepare dataset</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Run experiments / model training</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Analyze results + visualize (graphs, tables)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Write full paper draft (Introduction → Conclusion)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Get peer/mentor review + incorporate feedback</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Format to IEEE / ACM / target journal style</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'aipaper')"><div class="cl-check"></div><div><div class="cl-text">Submit to arXiv / target conference / journal</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Professor-led Research (AI / Physics / Systems)</div>
+  <div class="sec-subtitle">Start May/June 2026 — Domain decision is URGENT</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🔭 Professor Research Outreach Checklist</div>
+      <div class="cl-prog-text" id="prof-prog">0/8 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="prof-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">DECIDE: AI vs Physics vs Systems — commit to one domain this week</div><div class="cl-sub">This unblocks everything else</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">List 10 professors at IITs / IISc / BITS working in chosen domain</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Read 1 recent paper from each professor</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Draft personalized cold email referencing their specific work</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Send emails to all 10 professors by end of May</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Follow up with non-responders after 1 week</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Confirm research engagement with at least 1 professor by June 15</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'prof')"><div class="cl-check"></div><div><div class="cl-text">Define research scope, timeline, and deliverable with professor</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Core Passion Project</div>
+  <div class="sec-subtitle">April–June 2026 | Closure by June 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">⭐ Core Passion Project Checklist</div>
+      <div class="cl-prog-text" id="cpp-prog">0/6 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="cpp-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Define the project scope and outcome clearly (1-page brief)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Connect project to your personal story / college narrative</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Complete core deliverable (prototype / publication / product)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Document impact metrics (users, data, citations)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Write a 1-paragraph "passion project" narrative for college apps</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'cpp')"><div class="cl-check"></div><div><div class="cl-text">Close / wrap by June 30, 2026</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== CONFERENCES =========== -->
+<div id="conferences" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ Conferences Note</div>
+    <ul>
+      <li>Singapore & India conferences (May/June) — confirm dates immediately. If presenting, abstract must be ready now.</li>
+      <li>ICAME Turkey (December 2026) — abstract submission is typically 3–4 months before. Target Sept 2026 submission.</li>
+      <li>Conference attendance = strong college app differentiator. Aim to present, not just attend.</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">Singapore Conference — May 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🇸🇬 Singapore Conference Checklist</div>
+      <div class="cl-prog-text" id="sing-prog">0/6 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="sing-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Confirm conference name + exact dates</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Check if abstract/paper submission is required to present</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Prepare abstract (250–500 words) from AI research paper</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Register + pay conference fee</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Arrange travel + visa (Singapore Visa for Indian nationals)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'sing')"><div class="cl-check"></div><div><div class="cl-text">Prepare presentation slide deck (15–20 slides)</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">India Conference — June 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🇮🇳 India Conference Checklist</div>
+      <div class="cl-prog-text" id="indconf-prog">0/5 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="indconf-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'indconf')"><div class="cl-check"></div><div><div class="cl-text">Confirm conference name + venue + exact dates</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'indconf')"><div class="cl-check"></div><div><div class="cl-text">Register + submit abstract if required</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'indconf')"><div class="cl-check"></div><div><div class="cl-text">Prepare presentation / poster</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'indconf')"><div class="cl-check"></div><div><div class="cl-text">Attend + network with researchers / professors</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'indconf')"><div class="cl-check"></div><div><div class="cl-text">Collect certificates / letters of participation for portfolio</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">ICAME Turkey Conference — December 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🇹🇷 ICAME Turkey Checklist</div>
+      <div class="cl-prog-text" id="icame-prog">0/7 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="icame-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Find ICAME 2026 official website + confirm dates</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Check abstract submission deadline (likely Aug–Sept 2026)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Write abstract from AI research paper or passion project</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Submit abstract by deadline (target Sept 1, 2026)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Await acceptance notification</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Arrange Turkey visa + travel + accommodation</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'icame')"><div class="cl-check"></div><div><div class="cl-text">Prepare full presentation / paper for December event</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== SCHOLARSHIPS =========== -->
+<div id="scholarships" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ Scholarship Priority Note</div>
+    <ul>
+      <li>MEXT is a full Japanese government scholarship — covers tuition + living allowance. Extremely competitive but very achievable with strong academics + research. DO NOT MISS embassy notification window.</li>
+      <li>Rashtriya Vigyan Puraskar: The listed dates (11 May 2026 – 28 Mar 2026) appear contradictory. Verify immediately at awards.gov.in or DST portal.</li>
+      <li>Prepare your academic transcript, recommendation letters, and SOP 2 weeks before any deadline.</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">MEXT Scholarship — Government of Japan</div>
+  <div class="sec-subtitle">Embassy-recommended — apply April–June 2026 window</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🇯🇵 MEXT Scholarship Checklist</div>
+      <div class="cl-prog-text" id="mext-prog">0/12 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="mext-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Check Japanese Embassy India website for 2026–27 MEXT application notice</div><div class="cl-sub">in.emb-japan.go.jp — timing varies year to year</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Confirm which category: Undergraduate / Research / Teacher Training</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Download & read the 2026 application guidelines fully</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Prepare all academic transcripts (certified + translated if needed)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Get 2 letters of recommendation (from subject teachers + principal)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Write "Field of Study and Research Plan" essay (detailed, 2+ pages)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Complete medical certificate from authorized doctor</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Fill application form (download from embassy site)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Research Japanese universities in your field (list 3 preferred)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Optional: Begin basic Japanese (N5 level shows dedication)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Submit complete application package to embassy before deadline</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'mext')"><div class="cl-check"></div><div><div class="cl-text">Prepare for embassy interview (if shortlisted)</div><div class="cl-sub">Expect questions on research interest, Japan preference, future goals</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Rashtriya Vigyan Puraskar / PMRBP</div>
+  <div class="sec-subtitle">⚠️ Verify dates urgently — listed dates appear contradictory (11 May vs 28 Mar 2026)</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🏆 RVP / PMRBP Checklist</div>
+      <div class="cl-prog-text" id="rvp-prog">0/6 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="rvp-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Visit awards.gov.in or DST portal — find official 2026 dates</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Confirm eligibility criteria (age, field, nationality)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Prepare nomination form + supporting documents</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Collect endorsement / nomination from institution / teacher</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Submit project documentation, research evidence, or innovation proof</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'rvp')"><div class="cl-check"></div><div><div class="cl-text">Submit nomination before confirmed deadline</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== APPLICATIONS =========== -->
+<div id="applications" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ College Applications Note</div>
+    <ul>
+      <li>College shortlisting (May–July) must happen BEFORE essay writing — don't skip this step.</li>
+      <li>Build a balanced list: 3 reach / 4 target / 3 safety. Research each school's specific essay prompts.</li>
+      <li>Personal statement brainstorming (August) should be story-first, not achievement-first.</li>
+      <li>Your "spike" (AI research + hackathons + MEXT) needs to come through clearly in your narrative.</li>
+    </ul>
+  </div>
+
+  <div class="sec-title">College Selection — May to July 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">🎓 College Shortlisting Checklist</div>
+      <div class="cl-prog-text" id="collsel-prog">0/9 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="collsel-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Decide: India (JEE/NEET) vs Abroad (US/UK/Singapore/Japan) — or both?</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Define dream major / field of study</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Research 20 colleges — shortlist to 10</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Categorize: Reach (3–4), Target (4–5), Safety (2–3)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Note each college's application portal + deadline + required tests</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Check scholarship / financial aid options per college</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Read essay prompts for each college — note overlapping themes</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Finalize list of 10 colleges by July 31, 2026</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'collsel')"><div class="cl-check"></div><div><div class="cl-text">Create a tracker spreadsheet with deadlines for each college</div></div></div>
+    </div>
+  </div>
+
+  <div class="sec-title">Personal Statements & Essays — August 2026</div>
+  <div class="cl-group">
+    <div class="cl-head">
+      <div class="cl-head-title">✍️ Personal Statement Checklist</div>
+      <div class="cl-prog-text" id="ps-prog">0/8 done</div>
+    </div>
+    <div class="cl-bar"><div class="cl-fill" id="ps-fill" style="width:0%"></div></div>
+    <div class="cl-body">
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Brainstorm 10 possible essay topics (free-write, no filter)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Identify the 1 story that shows your "spike" and authentic self</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Write Draft 1 of Common App main essay (650 words)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Get feedback from mentor / teacher / parent — revise</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Write supplemental essays for top 5 schools</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Build activity list (10 entries, most impactful first)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Request recommendation letters from 2–3 teachers (August deadline for teachers)</div></div></div>
+      <div class="cl-item" onclick="toggle(this,'ps')"><div class="cl-check"></div><div><div class="cl-text">Finalize all essays before October — submit Early Decision / Early Action applications</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- =========== 12-WEEK PROJECT =========== -->
+<div id="project12" class="section">
+  <div class="note-box">
+    <div class="note-box-title">⚡ 12-Week Project Tracker</div>
+    <ul>
+      <li>Enter your project title below — it will appear in your progress export.</li>
+      <li>Each week has a phase label and key deliverables. Check off items as you go.</li>
+      <li>Download as Excel (CSV) or print as PDF using the buttons below.</li>
+      <li>This tracker mirrors the 12-session mentor structure from your session log.</li>
+    </ul>
+  </div>
+
+  <div class="proj-header">
+    <div class="proj-title-row">
+      <input type="text" class="proj-title-input" id="proj-title-input" placeholder="Enter your Project Title here..." oninput="updateProjTitle()">
+      <button class="proj-dl-btn" onclick="downloadProjectExcel()">⬇ Download as Excel (CSV)</button>
+      <button class="proj-dl-btn2" onclick="downloadProjectPDF()">⬇ Download as PDF</button>
+    </div>
+    <div style="font-size:12px; color:var(--text3)">Project: <span id="proj-title-display" style="color:var(--accent2); font-weight:600">[Not set]</span> &nbsp;|&nbsp; Progress: <span id="proj-overall-pct" style="color:var(--green)">0%</span> complete</div>
+  </div>
+
+  <div class="sec-title">Weekly Session Tracker</div>
+  <div class="week-grid" id="week-grid"></div>
+</div>
+
+</main>
+
+<!-- DOWNLOAD BAR -->
+<div class="dl-bar">
+  <div class="dl-bar-label"><strong>Aadi 2026 Tracker</strong> — Save your progress anytime</div>
+  <div class="dl-btns">
+    <button class="dl-btn dl-btn-secondary" onclick="downloadProgressJSON()">⬇ Download Progress (JSON)</button>
+    <button class="dl-btn dl-btn-primary" onclick="printPage()">🖨 Print / Save as PDF</button>
+  </div>
+</div>
+
+<script>
+// ======================== NAVIGATION ========================
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+// ======================== CHECKLIST ========================
+function toggle(el, groupId) {
+  el.classList.toggle('done');
+  updateProg(groupId);
+  updateGlobalProg();
+  saveToStorage();
+}
+
+function updateProg(groupId) {
+  const items = document.querySelectorAll(`.cl-item[onclick*="'${groupId}'"]`);
+  const done = document.querySelectorAll(`.cl-item[onclick*="'${groupId}'"]:is(.done)`);
+  const pct = items.length > 0 ? Math.round((done.length / items.length) * 100) : 0;
+  const prog = document.getElementById(groupId + '-prog');
+  const fill = document.getElementById(groupId + '-fill');
+  if (prog) prog.textContent = `${done.length}/${items.length} done`;
+  if (fill) fill.style.width = pct + '%';
+}
+
+function updateGlobalProg() {
+  const all = document.querySelectorAll('.cl-item');
+  const done = document.querySelectorAll('.cl-item.done');
+  const wchecks = document.querySelectorAll('.week-check input[type=checkbox]:checked');
+  const wallchecks = document.querySelectorAll('.week-check input[type=checkbox]');
+  const total = all.length + wallchecks.length;
+  const doneCount = done.length + wchecks.length;
+  const pct = total > 0 ? Math.round((doneCount / total) * 100) : 0;
+  document.getElementById('prog-pct').textContent = pct + '%';
+}
+
+// ======================== STATUS & NOTES ========================
+function saveStatus(key, val) {
+  localStorage.setItem('aadi-status-' + key, val);
+}
+function saveNote(key, val) {
+  localStorage.setItem('aadi-note-' + key, val);
+}
+
+function loadTableData() {
+  document.querySelectorAll('.status-select').forEach(sel => {
+    const key = sel.getAttribute('onchange').match(/'([^']+)'/)[1];
+    const saved = localStorage.getItem('aadi-status-' + key);
+    if (saved) sel.value = saved;
+  });
+  document.querySelectorAll('.notes-input').forEach(inp => {
+    const key = inp.getAttribute('onchange').match(/'([^']+)'/)[1];
+    const saved = localStorage.getItem('aadi-note-' + key);
+    if (saved) inp.value = saved;
+  });
+}
+
+// ======================== LOCAL STORAGE ========================
+function saveToStorage() {
+  const done = [];
+  document.querySelectorAll('.cl-item').forEach((el, i) => {
+    if (el.classList.contains('done')) done.push(i);
+  });
+  localStorage.setItem('aadi-checklist', JSON.stringify(done));
+
+  const wdone = [];
+  document.querySelectorAll('.week-check input[type=checkbox]').forEach((cb, i) => {
+    if (cb.checked) wdone.push(i);
+  });
+  localStorage.setItem('aadi-weekchecks', JSON.stringify(wdone));
+}
+
+function loadFromStorage() {
+  const done = JSON.parse(localStorage.getItem('aadi-checklist') || '[]');
+  document.querySelectorAll('.cl-item').forEach((el, i) => {
+    if (done.includes(i)) el.classList.add('done');
+  });
+  const wdone = JSON.parse(localStorage.getItem('aadi-weekchecks') || '[]');
+  document.querySelectorAll('.week-check input[type=checkbox]').forEach((cb, i) => {
+    if (wdone.includes(i)) cb.checked = true;
+  });
+  const title = localStorage.getItem('aadi-proj-title');
+  if (title) {
+    document.getElementById('proj-title-input').value = title;
+    document.getElementById('proj-title-display').textContent = title;
+  }
+}
+
+// ======================== COUNTDOWNS ========================
+const today = new Date();
+const deadlines = [
+  { label: 'Mission Brain Hackathon', date: '2026-05-25', color: 'var(--red)' },
+  { label: 'Flying Wings Project', date: '2026-05-31', color: 'var(--orange)' },
+  { label: 'IIT Madras Road Safety', date: '2026-06-30', color: 'var(--amber)' },
+  { label: 'Core Passion Project Closure', date: '2026-06-30', color: 'var(--blue)' },
+  { label: 'AI Research Paper Submission', date: '2026-06-15', color: 'var(--teal)' },
+  { label: 'MEXT Scholarship (est.)', date: '2026-06-15', color: 'var(--purple)' },
+  { label: 'College List Finalized', date: '2026-07-31', color: 'var(--green)' },
+  { label: 'ICAME Abstract Submission', date: '2026-09-01', color: 'var(--accent)' },
+];
+
+const cdGrid = document.getElementById('countdowns');
+deadlines.forEach(d => {
+  const dt = new Date(d.date);
+  const diff = Math.ceil((dt - today) / (1000 * 60 * 60 * 24));
+  const div = document.createElement('div');
+  div.className = 'cd-card';
+  div.innerHTML = `<div class="cd-days" style="color:${d.color};font-family:'Outfit',sans-serif;font-size:30px;font-weight:800">${diff > 0 ? diff : 'PAST'}</div><div class="cd-label" style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.5px">days away</div><div class="cd-event" style="font-size:11px;color:var(--text2);margin-top:6px">${d.label}</div>`;
+  cdGrid.appendChild(div);
+});
+
+// ======================== 12-WEEK TRACKER ========================
+const weeks = [
+  { phase: 'Initiation', color: 'var(--blue)', tasks: ['Introduction to the Project', 'Understanding the Goal', 'Define success criteria'], checks: ['Set up project folder / repo', 'Write project brief (1 page)', 'Share brief with mentor'] },
+  { phase: 'Initiation', color: 'var(--blue)', tasks: ['Defining Project Objectives', 'Scope finalization'], checks: ['Write SMART objectives', 'Define in-scope vs out-of-scope', 'Get mentor sign-off on scope'] },
+  { phase: 'Planning', color: 'var(--teal)', tasks: ['Research & Resource Planning', 'Literature review'], checks: ['Complete lit review (10+ sources)', 'List required tools / datasets', 'Set up work environment'] },
+  { phase: 'Planning', color: 'var(--teal)', tasks: ['Timeline & Milestones', 'Set deadlines for all phases'], checks: ['Create Gantt chart / timeline', 'Identify risks + mitigation', 'Share timeline with mentor'] },
+  { phase: 'Development', color: 'var(--orange)', tasks: ['Initial Development', 'Prototyping'], checks: ['Build v0.1 prototype', 'Test core functionality', 'Document learnings so far'] },
+  { phase: 'Development', color: 'var(--orange)', tasks: ['Core Build / Creation', 'Main coding / building phase'], checks: ['Complete primary feature set', 'Write clean, commented code', 'Commit to GitHub / save work'] },
+  { phase: 'Development', color: 'var(--orange)', tasks: ['Testing & Refining', 'Quality assurance'], checks: ['Run test cases (unit + integration)', 'Fix top 3 bugs identified', 'Get beta feedback from 1 person'] },
+  { phase: 'Development', color: 'var(--orange)', tasks: ['Feature Enhancement', 'Adjustments & polish'], checks: ['Add secondary features', 'Improve UI / usability / accuracy', 'Update documentation'] },
+  { phase: 'Implementation', color: 'var(--purple)', tasks: ['Prepare for Launch', 'Pre-launch checklist'], checks: ['Complete README / user guide', 'Deploy / publish / distribute', 'Run final smoke test'] },
+  { phase: 'Implementation', color: 'var(--purple)', tasks: ['Final Implementation', 'Go live / submit'], checks: ['Submit to competition / platform', 'Share with target audience', 'Collect initial feedback'] },
+  { phase: 'Implementation', color: 'var(--purple)', tasks: ['Post-Implementation Review', 'Adjustments based on feedback'], checks: ['Gather structured feedback (5+ people)', 'Implement top priority fix', 'Update project portfolio entry'] },
+  { phase: 'Evaluation', color: 'var(--accent)', tasks: ['Final Evaluation & Review', 'Mentor final session'], checks: ['Write 1-page project reflection', 'Document impact + metrics', 'Celebrate completion 🎉'] },
+];
+
+const wg = document.getElementById('week-grid');
+weeks.forEach((w, i) => {
+  const wn = i + 1;
+  const div = document.createElement('div');
+  div.className = 'week-card';
+  const checks = w.checks.map((c, ci) => `
+    <div class="week-check">
+      <input type="checkbox" id="wc-${wn}-${ci}" onchange="updateGlobalProg(); updateWeekProg(${wn}); saveToStorage()">
+      <label for="wc-${wn}-${ci}">${c}</label>
+    </div>`).join('');
+  div.innerHTML = `
+    <div class="week-head">
+      <div class="week-num">Week ${wn}</div>
+      <span class="badge b-gray" style="color:${w.color};border-color:${w.color}30;background:${w.color}12">${w.phase}</span>
+    </div>
+    <div class="week-body">
+      <div class="week-task">${w.tasks[0]}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">${w.tasks[1] || ''}</div>
+      ${checks}
+      <div style="margin-top:8px;font-size:11px;color:var(--text3)" id="wprog-${wn}">0/${w.checks.length} done</div>
+    </div>`;
+  wg.appendChild(div);
+});
+
+function updateWeekProg(wn) {
+  const all = document.querySelectorAll(`[id^="wc-${wn}-"]`);
+  const done = document.querySelectorAll(`[id^="wc-${wn}-"]:checked`);
+  const el = document.getElementById('wprog-' + wn);
+  if (el) el.textContent = `${done.length}/${all.length} done`;
+  const pct = all.length > 0 ? Math.round(done.length / all.length * 100) : 0;
+  const projPct = getWeekOverallPct();
+  document.getElementById('proj-overall-pct').textContent = projPct + '%';
+}
+
+function getWeekOverallPct() {
+  const all = document.querySelectorAll('.week-check input[type=checkbox]');
+  const done = document.querySelectorAll('.week-check input[type=checkbox]:checked');
+  return all.length > 0 ? Math.round(done.length / all.length * 100) : 0;
+}
+
+// ======================== PROJECT TITLE ========================
+function updateProjTitle() {
+  const val = document.getElementById('proj-title-input').value || '[Not set]';
+  document.getElementById('proj-title-display').textContent = val;
+  localStorage.setItem('aadi-proj-title', val);
+}
+
+// ======================== DOWNLOADS ========================
+function downloadProjectExcel() {
+  const title = document.getElementById('proj-title-input').value || 'Project';
+  let csv = `"Project Title","${title}"\n\n`;
+  csv += '"Week","Phase","Task 1","Task 2","Checklist Item","Status"\n';
+  weeks.forEach((w, i) => {
+    const wn = i + 1;
+    w.checks.forEach((c, ci) => {
+      const cb = document.getElementById(`wc-${wn}-${ci}`);
+      const status = cb && cb.checked ? 'Done' : 'Pending';
+      csv += `"Week ${wn}","${w.phase}","${w.tasks[0]}","${w.tasks[1] || ''}","${c}","${status}"\n`;
+    });
+  });
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Aadi_Project_${title.replace(/\s+/g,'_')}_12Weeks.csv`;
+  a.click();
+}
+
+function downloadProjectPDF() {
+  const title = document.getElementById('proj-title-input').value || 'My Project';
+  const win = window.open('', '_blank');
+  let html = `<!DOCTYPE html><html><head><title>${title} — 12 Week Tracker</title>
+  <style>
+    body{font-family:Arial,sans-serif;font-size:12px;padding:30px;color:#111}
+    h1{font-size:22px;margin-bottom:4px}
+    h2{font-size:14px;color:#555;margin-bottom:20px}
+    table{width:100%;border-collapse:collapse;margin-bottom:30px}
+    th{background:#1a1a2e;color:#fff;padding:8px 10px;text-align:left;font-size:11px}
+    td{padding:8px 10px;border-bottom:1px solid #eee;vertical-align:top}
+    tr:hover td{background:#f9f9ff}
+    .done{text-decoration:line-through;color:#999}
+    .phase-init{background:#e8f0fe}
+    .phase-plan{background:#e6f4ea}
+    .phase-dev{background:#fff3e0}
+    .phase-impl{background:#f3e8fd}
+    .phase-eval{background:#fff8e1}
+    @media print{button{display:none}}
+  </style></head><body>
+  <button onclick="window.print()" style="padding:8px 16px;background:#e8a045;border:none;border-radius:6px;font-weight:700;cursor:pointer;margin-bottom:20px">Print / Save PDF</button>
+  <h1>${title}</h1><h2>12-Week Project Tracker — Aadi 2026</h2>
+  <table><thead><tr><th>Week</th><th>Phase</th><th>Focus</th><th>Checklist</th><th>Status</th></tr></thead><tbody>`;
+  const phaseClass = {'Initiation':'phase-init','Planning':'phase-plan','Development':'phase-dev','Implementation':'phase-impl','Evaluation':'phase-eval'};
+  weeks.forEach((w, i) => {
+    const wn = i + 1;
+    w.checks.forEach((c, ci) => {
+      const cb = document.getElementById(`wc-${wn}-${ci}`);
+      const done = cb && cb.checked;
+      html += `<tr class="${phaseClass[w.phase]||''}"><td>Wk ${wn}</td><td>${w.phase}</td><td>${w.tasks[0]}</td><td class="${done?'done':''}">${c}</td><td>${done?'✅ Done':'⬜ Pending'}</td></tr>`;
+    });
+  });
+  html += `</tbody></table></body></html>`;
+  win.document.write(html);
+  win.document.close();
+}
+
+function downloadProgressJSON() {
+  const data = {
+    generatedAt: new Date().toISOString(),
+    projectTitle: document.getElementById('proj-title-input')?.value || '',
+    goals: [],
+    checklists: {},
+    weeklyProgress: {}
+  };
+
+  // Goals
+  for (let i = 1; i <= 18; i++) {
+    const status = localStorage.getItem('aadi-status-t' + i) || 'Pending';
+    const note = localStorage.getItem('aadi-note-n' + i) || '';
+    data.goals.push({ id: i, status, note });
+  }
+
+  // Checklists
+  const groups = ['mbrain','iitrs','htn','iris','cec','aipaper','prof','cpp','sing','indconf','icame','mext','rvp','collsel','ps'];
+  groups.forEach(g => {
+    const items = document.querySelectorAll(`.cl-item[onclick*="'${g}'"]`);
+    const done = document.querySelectorAll(`.cl-item[onclick*="'${g}'"]:is(.done)`);
+    data.checklists[g] = { total: items.length, done: done.length, pct: items.length ? Math.round(done.length/items.length*100) : 0 };
+  });
+
+  // Weekly
+  weeks.forEach((w, i) => {
+    const wn = i + 1;
+    const checks = w.checks.map((c, ci) => {
+      const cb = document.getElementById(`wc-${wn}-${ci}`);
+      return { task: c, done: cb ? cb.checked : false };
+    });
+    data.weeklyProgress[`week${wn}`] = { phase: w.phase, focus: w.tasks[0], checks };
+  });
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Aadi_Progress_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function printPage() {
+  window.print();
+}
+
+// ======================== INIT ========================
+const allGroups = ['mbrain','iitrs','htn','iris','cec','aipaper','prof','cpp','sing','indconf','icame','mext','rvp','collsel','ps'];
+loadFromStorage();
+allGroups.forEach(updateProg);
+updateGlobalProg();
+loadTableData();
+for (let i = 1; i <= 12; i++) updateWeekProg(i);
+</script>
+</body>
+</html>
